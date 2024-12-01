@@ -54,14 +54,14 @@ const InvoiceForm: React.FC = () => {
       // Fetch the .docx template from the public folder
       const response = await fetch(`${window.location.href}invoice-template.docx`);
       const arrayBuffer = await response.arrayBuffer();
-
+  
       // Load the template into PizZip (this will allow us to manipulate the .docx file)
       const zip = new PizZip(arrayBuffer);
-
+  
       // Create a Docxtemplater instance with the loaded template
       const doc = new Docxtemplater(zip);
       const formattedDate = formatDate(invoiceDate);
-
+  
       // Set the data to replace the placeholders in the template
       doc.setData({
         vehicleNumber,
@@ -76,23 +76,26 @@ const InvoiceForm: React.FC = () => {
         cgst,
         finalAmount,
       });
-
+  
       // Render the document to replace placeholders with actual data
       doc.render();
-
-      // Generate the new document as a blob
+  
+      // Generate the new document as a blob with the correct MIME type
       const out = doc.getZip().generate({ type: 'blob' });
-
+  
+      // Create a Blob with the correct MIME type for DOCX
+      const docxBlob = new Blob([out], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  
       // Create a download link and trigger the download
       const link = document.createElement('a');
-      link.href = URL.createObjectURL(out);
-      link.download = 'invoice.docx';
-      link.setAttribute('type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      link.href = URL.createObjectURL(docxBlob);
+      link.download = 'invoice.docx';  // Ensure it ends with .docx
       link.click();
     } catch (error) {
       console.error('Error generating Word file:', error);
     }
   };
+  
 
   // Fluent UI Stack configuration (for spacing)
   const stackTokens: IStackTokens = { childrenGap: 15 };
