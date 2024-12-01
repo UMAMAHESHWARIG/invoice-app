@@ -87,6 +87,7 @@ const InvoiceForm: React.FC = () => {
       const link = document.createElement('a');
       link.href = URL.createObjectURL(out);
       link.download = 'invoice.docx';
+      link.setAttribute('type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
       link.click();
     } catch (error) {
       console.error('Error generating Word file:', error);
