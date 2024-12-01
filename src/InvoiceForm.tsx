@@ -3,6 +3,15 @@ import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
 import { TextField, PrimaryButton, Stack, IStackTokens } from '@fluentui/react';
 
+const formatDate = (date: string) => {
+  const parsedDate = new Date(date);
+  return parsedDate.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
+};
+
 const InvoiceForm: React.FC = () => {
   // Default values
   const defaultBags = 150;
@@ -43,7 +52,7 @@ const InvoiceForm: React.FC = () => {
   const handleDownloadWord = async () => {
     try {
       // Fetch the .docx template from the public folder
-      const response = await fetch('/invoice-template.docx');
+      const response = await fetch(`${window.location.href}invoice-template.docx`);
       const arrayBuffer = await response.arrayBuffer();
 
       // Load the template into PizZip (this will allow us to manipulate the .docx file)
@@ -51,11 +60,12 @@ const InvoiceForm: React.FC = () => {
 
       // Create a Docxtemplater instance with the loaded template
       const doc = new Docxtemplater(zip);
+      const formattedDate = formatDate(invoiceDate);
 
       // Set the data to replace the placeholders in the template
       doc.setData({
         vehicleNumber,
-        invoiceDate,
+        formattedDate,
         invoiceNumber,
         bags,
         kgPerBag,
@@ -85,6 +95,9 @@ const InvoiceForm: React.FC = () => {
 
   // Fluent UI Stack configuration (for spacing)
   const stackTokens: IStackTokens = { childrenGap: 15 };
+
+
+  
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '20px' }}>
