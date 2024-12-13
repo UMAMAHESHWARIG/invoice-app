@@ -3,6 +3,15 @@ import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
 import { TextField, PrimaryButton, Stack, IStackTokens } from '@fluentui/react';
 
+const formatDate = (dateString: string): string => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0'); // Add leading zero
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
 const InvoiceForm: React.FC = () => {
   // Default values
   const defaultBags = 150;
@@ -55,7 +64,7 @@ const InvoiceForm: React.FC = () => {
       // Set the data to replace the placeholders in the template
       doc.setData({
         vehicleNumber,
-        invoiceDate,
+        invoiceDate:formatDate(invoiceDate),
         invoiceNumber,
         bags,
         kgPerBag,
